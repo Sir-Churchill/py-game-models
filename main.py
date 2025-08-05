@@ -10,20 +10,17 @@ def main() -> None:
         config = json.load(f)
 
     for nickname, value in config.items():
-        email = value["email"]
-        bio = value["bio"]
+        email = value.get("email")
+        bio = value.get("bio")
 
         race_data = value.get("race")
         race = Race.objects.get_or_create(
-            name=race_data["name"], description=race_data["description"])[0]
+            name=race_data["name"], description=race_data.get("description"))[0]
 
         guild_data = value.get("guild")
         if guild_data:
-            description = (
-                guild_data)["description"] if ("description" in
-                                               guild_data) else None
             guild = Guild.objects.get_or_create(
-                name=guild_data["name"], description=description)[0]
+                name=guild_data["name"], description=guild_data.get("description"))[0]
         else:
             guild = None
 
@@ -36,7 +33,7 @@ def main() -> None:
         else:
             race_data["skills"] = []
 
-        Player.objects.create(nickname=nickname,
+        Player.objects.get_or_create(nickname=nickname,
                               email=email, bio=bio, race=race, guild=guild)
 
 
